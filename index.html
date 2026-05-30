@@ -252,11 +252,10 @@ if (beltMatch && beltMatch[1]) {
             const countMap = new Map();
             for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
             const result = [];
-            for (let [item, cnt] of countMap) {
-                if (item === 'Аура death') continue; // Аура отдельно не показываем в поясе
-                if (cnt === 1) result.push(item);
-                else result.push(`${cnt} ${item}`);
-            }
+for (let [item, cnt] of countMap) {
+    if (cnt === 1) result.push(item);
+    else result.push(`${cnt} ${item}`);
+}
             belt = result.join(', ');
         }
     }
@@ -345,8 +344,6 @@ tableHtml += '</tbody></table>';
             }
             if (sortedWeapons.length > 15) statsHtml += `<div class="stat-item"><span>...</span><span>+${sortedWeapons.length - 15}</span></div>`;
             statsHtml += '</div></div>';
-            
-            statsHtml += '<div class="stat-block"><h3>✨ АУРЫ</h3><div class="auras-count">Аура death: ' + stats.auras + '</div></div>';
             
             statsHtml += '<div class="stat-block"><h3>🧪 ПРЕДМЕТЫ (с поясов)</h3><div class="stat-list">';
             if (stats.items.size > 0) {
