@@ -304,23 +304,24 @@ if (beltMatch && beltMatch[1]) {
             progressText.innerText = `✅ Готово! ${selected.length}/${selected.length}`;
             setTimeout(() => document.getElementById('progressArea').style.display = 'none', 1000);
             
-            let tableHtml = '能able<thead><tr><th>Ник</th><th>Стиль</th><th>Оружие</th><th>Пояс</th></tr></thead><tbody>';
-            for (let r of results) {
-                let styleClass = '';
-                if (r.style === 'Урон') styleClass = 'style-Урон';
-                else if (r.style === 'Броня') styleClass = 'style-Броня';
-                else if (r.style === 'Уворот') styleClass = 'style-Уворот';
-                else if (r.style === 'Элита') styleClass = 'style-Элита';
-                else if (r.style === 'Ошибка') styleClass = 'error-text';
-                
-                tableHtml += `<tr>
-                    <td>${r.nickname}</td>
-                    <td class="${styleClass}">${r.style}</td>
-                    <td>${r.weapon}</td>
-                    <td>${r.belt}</td>
-                </tr>`;
-            }
-            tableHtml += '</tbody></table>';
+            // ЗАМЕНИ ЭТУ ЧАСТЬ (строки с таблицей в runParser)
+let tableHtml = '<table><thead><tr><th>Ник</th><th>Стиль</th><th>Оружие</th><th>Пояс</th></tr></thead><tbody>';
+for (let r of results) {
+    let styleClass = '';
+    if (r.style === 'Урон') styleClass = 'style-Урон';
+    else if (r.style === 'Броня') styleClass = 'style-Броня';
+    else if (r.style === 'Уворот') styleClass = 'style-Уворот';
+    else if (r.style === 'Элита') styleClass = 'style-Элита';
+    else if (r.style === 'Ошибка') styleClass = 'error-text';
+    
+    tableHtml += `<tr>
+        <td>${r.nickname}</td>
+        <td class="${styleClass}">${r.style}</td>
+        <td>${r.weapon}</td>
+        <td>${r.belt}</td>
+    </tr>`;
+}
+tableHtml += '</tbody></table>';
             document.getElementById('resultsTable').innerHTML = tableHtml;
             document.getElementById('resultsArea').style.display = 'block';
             
