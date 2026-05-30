@@ -234,28 +234,33 @@
                 }
                 
                 const beltMatch = html.match(/Пояс:<\/td>.*?>(.*?)<\/td>/i);
-                if (beltMatch && beltMatch[1]) {
-                    let beltRaw = beltMatch[1].trim();
-                    if (beltRaw !== '-' && beltRaw !== '—') {
-                        const items = [];
-                        const parts = beltRaw.split(',');
-                        for (let part of parts) {
-                            let clean = part.replace(/\([^)]*\)/g, '').replace(/<[^>]*>/g, '').trim();
-                            if (clean && clean !== '-' && clean !== '—') {
-                                items.push(clean);
-                                if (clean === 'Аура death') stats.auras++;
-                                stats.items.set(clean, (stats.items.get(clean) || 0) + 1);
-                            }
-                        }
-                        if (items.length > 0) {
-                            const countMap = new Map();
-                            for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
-                            const result = [];
-                            for (let [item, cnt] of countMap) result.push(cnt === 1 ? item : `${cnt} ${item}`);
-                            belt = result.join(', ');
-                        }
-                    }
-                }
+if (beltMatch && beltMatch[1]) {
+    let beltRaw = beltMatch[1].trim();
+    if (beltRaw !== '-' && beltRaw !== '—') {
+        const items = [];
+        const parts = beltRaw.split(',');
+        for (let part of parts) {
+            // Убираем (цифры) и (ивент)
+            let clean = part.replace(/\([^)]*\)/g, '').replace(/<[^>]*>/g, '').trim();
+            if (clean && clean !== '-' && clean !== '—') {
+                items.push(clean);
+                if (clean === 'Аура death') stats.auras++;
+                stats.items.set(clean, (stats.items.get(clean) || 0) + 1);
+            }
+        }
+        if (items.length > 0) {
+            const countMap = new Map();
+            for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
+            const result = [];
+            for (let [item, cnt] of countMap) {
+                if (item === 'Аура death') continue; // Аура отдельно не показываем в поясе
+                if (cnt === 1) result.push(item);
+                else result.push(`${cnt} ${item}`);
+            }
+            belt = result.join(', ');
+        }
+    }
+}
                 
                 return { nickname: nick, style, weapon, belt };
             } catch(e) {
