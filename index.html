@@ -1,249 +1,638 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Банк - Кредитование</title>
-    <link rel="stylesheet" href="https://mmobitva.ru/style/default_v_1_0.css?v=1775406101">
-    <link rel="stylesheet" href="https://mmobitva.ru/style/dd.css?v=1597327608">
-    <link rel="stylesheet" href="/style/foot.css?v=20260317_2" type="text/css">
+    <title>Mobitva Parser</title>
     <style>
-        body {
-            background: #c5af7f;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        .main_block {
-            max-width: 500px;
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0e1a;
+            color: #00ff00;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 10px;
         }
-        .button_alt_01 {
-            background-color: #ff6700;
-            text-align: center;
-            width: 95%;
-            height: 35px;
-            line-height: 32px;
-            outline: none;
-            margin-top: -2px;
-            padding-top: 4px;
-            border: 2px solid black;
+        
+        h1 {
+            color: #ffff00;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .controls {
+            background: #1a1e2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #00ff00;
+        }
+        
+        .section {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffff00;
+            font-weight: bold;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0a0e1a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        
+        textarea {
+            height: 200px;
+            font-size: 12px;
+        }
+        
+        button {
+            background: #00ff00;
+            color: #0a0e1a;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #00cc00;
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .checkbox-group {
+            background: #0a0e1a;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            margin: 5px 0;
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-item:hover {
+            background: #1a1e2a;
+        }
+        
+        .checkbox-item input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
         }
-        .button_alt_01:hover {
-            background: #ff9a00;
+        
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            color: #00ff00;
+            font-weight: normal;
         }
-        .ico_head_all {
-            vertical-align: middle;
-            width: 20px;
-            margin-right: 3px;
+        
+        .select-buttons {
+            margin-bottom: 10px;
         }
-        .money-color {
-            font-weight: bold;
-            color: #d4af37;
+        
+        .select-buttons button {
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-right: 5px;
         }
-        hr {
-            border: none;
-            background-color: #B69C63;
-            height: 2px;
-            margin: 15px auto;
-        }
-        .credit-calc {
-            background: #c4ae7f;
-            border: 1px solid #7b4811;
+        
+        .progress {
+            background: #1a1e2a;
+            padding: 15px;
             border-radius: 4px;
-            padding: 12px;
-            margin: 15px 0;
+            margin-bottom: 20px;
+            display: none;
         }
-        .credit-rate {
-            font-size: 20px;
+        
+        .results {
+            background: #1a1e2a;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            display: none;
+        }
+        
+        .stats {
+            background: #1a1e2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th, td {
+            border: 1px solid #00ff00;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background: #00ff00;
+            color: #0a0e1a;
             font-weight: bold;
-            color: #2c5a2e;
         }
-        .calc-input {
-            background: #e7ce98;
-            border: 1px solid #7b4811;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            width: 120px;
+        
+        .status {
+            color: #ffff00;
+            margin-top: 10px;
+            font-size: 12px;
         }
-        .result-text {
-            background: #ffffcc;
-            border: 2px solid black;
-            border-radius: 4px;
-            padding: 10px;
+        
+        .stat-item {
             margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .stat-label {
+            color: #ffff00;
+            font-weight: bold;
+        }
+        
+        .auras {
+            color: #ff44ff;
+        }
+        
+        .save-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00ff00;
+            color: #0a0e1a;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
-
-<div style="position: relative;top: -5px;z-index:99999">
-    <table style="margin: auto;border-spacing: 0;height: 40px;max-width: 100%;">
-        <tr>
-            <td class="logo-frame-left" style="width: 18px;"></td>
-            <td class="logo-frame-center">
-                <div style="font-size: 15px; font-family: 'Roboto', sans-serif; display: flex; justify-content: center; align-items: center; gap: 3px; font-weight: 600;">
-                    <img src="https://mmobitva.ru/images/icons/level.png" width="24px">21
-                    <img src="https://mmobitva.ru/images/icons/hp.png" width="24px">
-                    <span>2139</span>
-                    <img src="https://mmobitva.ru/images/icons/plata.png" width="20px">
-                    <span class="money-color">237</span>
-                    <img src="https://mmobitva.ru/images/icons/zoloto.png" width="20px">
-                    <span class="money-color">3044</span>
-                    <img src="https://mmobitva.ru/images/icons/serebro.png" width="20px">
-                    <span class="money-color">7</span>
-                    <img src="https://mmobitva.ru/images/icons/med.png" width="20px">
-                    <span class="money-color">48</span>
+    <div class="container">
+        <h1>🎯 MOBITVA PARSER v3.1</h1>
+        
+        <div class="controls">
+            <div class="section">
+                <label>👥 СПИСОК ПЕРСОНАЖЕЙ (ник|id)</label>
+                <textarea id="players" placeholder="Aruta|500
+𝓑𝓐𝓡𝓜𝓐𝓛𝓔𝓨|147
+FREEMAN|372
+KROP|166
+GiBRiDiK|235
+ᙖᗝᙁᗯᙓᘜᕼᕠᕫ|137
+Макаров|298
+PeRvoRoDNi|350"></textarea>
+                <div class="status">📝 Формат: ник|id (каждый персонаж с новой строки)</div>
+            </div>
+            
+            <div class="section">
+                <label>✅ ВЫБЕРИ ПЕРСОНАЖЕЙ ДЛЯ ПАРСИНГА</label>
+                <div class="select-buttons">
+                    <button id="selectAllBtn">✅ ВЫБРАТЬ ВСЕХ</button>
+                    <button id="deselectAllBtn">❌ СНЯТЬ ВСЕХ</button>
+                    <button id="loadPlayersBtn">🔄 ЗАГРУЗИТЬ ИЗ СПИСКА</button>
+                    <button id="saveSelectionBtn">💾 СОХРАНИТЬ ВЫБОР</button>
                 </div>
-            </td>
-            <td class="logo-frame-right" style="width: 18px;"></td>
-        </tr>
-    </table>
-</div>
-
-<div class="main_block">
-    <div style="text-align: center;">-Банк-</div>
-    <left>
-        <div>Игровая валюта:
-            <img class="ico_head_all" src="https://mmobitva.ru/images/icons/zoloto.png">3044
-            <img class="ico_head_all" src="https://mmobitva.ru/images/icons/serebro.png">7
-            <img class="ico_head_all" src="https://mmobitva.ru/images/icons/med.png">48
-        </div>
-        <div>
-            Платина:
-            <img class="ico_head_all" src="https://mmobitva.ru/images/icons/plata.png">
-            237
-        </div>
-    </left>
-    <hr>
-
-    <center>
-        <br>
-        <div>
-            <div class="button_alt_01 start" onclick="alert('Кредит до 1000 платины, ставка 18% годовых')">
-                Кредитование (18% годовых)
-            </div>
-        </div>
-    </center>
-    <hr>
-
-    <center>
-        <div style="margin: 10px 0 0 0;">
-            -Оформление кредита (платина)-
-            <br>
-            Ставка банка: <span class="credit-rate">18% годовых</span>
-            <br><br>
-            Сумма кредита:
-            <div>
-                <input type="number" class="calc-input" id="creditAmount" value="100" min="10" max="1000" step="10">
-                <span> плат.</span>
-            </div>
-            <br>
-            Срок (дней):
-            <div>
-                <input type="number" class="calc-input" id="creditDays" value="30" min="7" max="180">
-                <span> дн.</span>
-            </div>
-            <br>
-            <div id="calcResult" class="result-text">
-                Ежемесячный платёж: 0 плат.<br>
-                Переплата: 0 плат.<br>
-                Итого: 0 плат.
-            </div>
-            <div class="button_alt_01" style="margin: 15px 0 0 0;" onclick="calculateCredit()">
-                Рассчитать кредит
-            </div>
-            <div class="button_alt_01" style="margin: 10px 0 0 0;" onclick="applyCredit()">
-                Взять кредит
-            </div>
-        </div>
-    </center>
-
-    <div style="width: 100%;text-align: center;">
-        <center>
-            <div style="margin: 10px 0 0 0;">
-                -Рюкзак-
-                <div style="margin: 5px 0 0 0;">
-                    <div class="button_alt_01 start" onclick="alert('Увеличить рюкзак')">Увеличить рюкзак</div>
+                <div id="checkboxList" class="checkbox-group">
+                    <div style="color: #666; text-align: center;">Нажми "Загрузить из списка"</div>
                 </div>
+                <div class="status" id="selectedCount">📊 Выбрано: 0 персонажей</div>
             </div>
-        </center>
+            
+            <div class="section">
+                <button id="parseBtn" disabled>🚀 ЗАПУСТИТЬ ПАРСИНГ</button>
+                <button id="clearBtn">🗑️ ОЧИСТИТЬ РЕЗУЛЬТАТЫ</button>
+            </div>
+        </div>
+        
+        <div id="progress" class="progress">
+            <div>📊 ПРОГРЕСС: <span id="progressText">0/0</span></div>
+            <div>👤 СЕЙЧАС: <span id="currentPlayer">-</span></div>
+        </div>
+        
+        <div id="results" class="results">
+            <h2>📋 РЕЗУЛЬТАТЫ ПАРСИНГА</h2>
+            <div id="resultsTable"></div>
+        </div>
+        
+        <div id="stats" class="stats">
+            <h2>📊 ФИНАЛЬНАЯ СТАТИСТИКА</h2>
+            <div id="statsContent"></div>
+        </div>
     </div>
-
-    <div style="text-align:center;margin:12px 0 4px 0;font-size:12px;">
-        <a href="javascript:void(0)" onclick="alert('Условия кредитования')">Условия кредитования</a>
-    </div>
-</div>
-
-<script>
-    function calculateCredit() {
-        let amount = parseFloat(document.getElementById('creditAmount').value);
-        let days = parseInt(document.getElementById('creditDays').value);
-        
-        if (isNaN(amount) || amount < 10) amount = 10;
-        if (amount > 1000) amount = 1000;
-        if (isNaN(days) || days < 7) days = 7;
-        if (days > 180) days = 180;
-        
-        let dailyRate = 0.18 / 365;
-        let totalInterest = amount * dailyRate * days;
-        let totalRepay = amount + totalInterest;
-        
-        let monthlyPayment = totalRepay / (days / 30.44);
-        if (days <= 30) monthlyPayment = totalRepay;
-        
-        totalInterest = Math.ceil(totalInterest * 100) / 100;
-        totalRepay = Math.ceil(totalRepay * 100) / 100;
-        monthlyPayment = Math.ceil(monthlyPayment * 100) / 100;
-        
-        document.getElementById('calcResult').innerHTML = 'Ежемесячный платёж: ' + monthlyPayment + ' плат.<br>Переплата: ' + totalInterest + ' плат.<br>Итого: ' + totalRepay + ' плат.';
-    }
     
-    function applyCredit() {
-        let amount = document.getElementById('creditAmount').value;
-        let days = document.getElementById('creditDays').value;
-        alert('Заявка на кредит ' + amount + ' платины на ' + days + ' дней отправлена. Одобрение через 5 минут.');
-    }
+    <div id="saveStatus" class="save-status">💾 Выбор сохранен!</div>
     
-    document.addEventListener('DOMContentLoaded', function() {
-        calculateCredit();
-    });
-</script>
-
-<script>
-    function preventSelection(element){
-        var preventSelection = false;
-        function addHandler(element, event, handler){
-            if (element.attachEvent) element.attachEvent('on' + event, handler);
-            else if (element.addEventListener) element.addEventListener(event, handler, false);
+    <script>
+        let playersList = [];
+        let isParsing = false;
+        
+        function showSaveStatus() {
+            const status = document.getElementById('saveStatus');
+            status.style.display = 'block';
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 2000);
         }
-        function removeSelection(){
-            if (window.getSelection) { window.getSelection().removeAllRanges(); }
-            else if (document.selection && document.selection.clear) document.selection.clear();
+        
+        function saveSelectionToLocalStorage() {
+            const selectionData = playersList.map(p => ({
+                nick: p.nick,
+                id: p.id,
+                selected: p.selected
+            }));
+            localStorage.setItem('mobitva_selection', JSON.stringify(selectionData));
+            showSaveStatus();
         }
-        addHandler(element, 'mousemove', function(){ if(preventSelection) removeSelection(); });
-        addHandler(element, 'mousedown', function(event){ var event = event || window.event; var sender = event.target || event.srcElement; preventSelection = !sender.tagName.match(/INPUT|TEXTAREA/i); });
-        addHandler(element, 'keydown', function(event){
-            var event = event || window.event;
-            var sender = event.target || event.srcElement;
-            if (sender.tagName.match(/INPUT|TEXTAREA/i)) return;
-            var key = event.keyCode || event.which;
-            if ((event.ctrlKey && key == 85) || (event.ctrlKey && key == 65) || (event.ctrlKey && key == 83)) {
-                removeSelection();
-                if (event.preventDefault) event.preventDefault();
-                else event.returnValue = false;
+        
+        function loadSelectionFromLocalStorage() {
+            const saved = localStorage.getItem('mobitva_selection');
+            if (saved) {
+                try {
+                    const savedData = JSON.parse(saved);
+                    for (let savedPlayer of savedData) {
+                        const found = playersList.find(p => p.id === savedPlayer.id && p.nick === savedPlayer.nick);
+                        if (found) {
+                            found.selected = savedPlayer.selected;
+                        }
+                    }
+                    renderCheckboxList();
+                } catch(e) {
+                    console.error('Ошибка загрузки сохранений:', e);
+                }
             }
-        });
-    }
-    preventSelection(document);
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        var style = document.createElement('style');
-        style.innerHTML = 'body { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; } img { user-drag: none; user-select: none; -moz-user-select: none; -webkit-user-drag: none; -webkit-user-select: none; }';
-        document.head.appendChild(style);
-    });
-</script>
+        }
+        
+        function loadPlayersFromText() {
+            const text = document.getElementById('players').value;
+            const lines = text.split('\n');
+            const newPlayers = [];
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line) {
+                    const parts = line.split('|');
+                    if (parts.length === 2) {
+                        newPlayers.push({
+                            nick: parts[0].trim(),
+                            id: parseInt(parts[1].trim()),
+                            selected: true
+                        });
+                    }
+                }
+            }
+            
+            if (newPlayers.length > 0) {
+                playersList = newPlayers;
+                loadSelectionFromLocalStorage();
+                renderCheckboxList();
+                document.getElementById('parseBtn').disabled = false;
+            } else {
+                alert('Нет валидных персонажей! Формат: ник|id');
+            }
+        }
+        
+        function renderCheckboxList() {
+            const container = document.getElementById('checkboxList');
+            let html = '';
+            
+            for (let i = 0; i < playersList.length; i++) {
+                const player = playersList[i];
+                html += `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="player_${i}" data-index="${i}" ${player.selected ? 'checked' : ''}>
+                        <label for="player_${i}">
+                            ${player.nick} | ID: ${player.id}
+                        </label>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            
+            const checkboxes = document.querySelectorAll('#checkboxList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    playersList[index].selected = this.checked;
+                    updateSelectedCount();
+                });
+            });
+            
+            updateSelectedCount();
+        }
+        
+        function updateSelectedCount() {
+            const selected = playersList.filter(p => p.selected).length;
+            document.getElementById('selectedCount').innerHTML = `📊 Выбрано: ${selected} из ${playersList.length} персонажей`;
+        }
+        
+        function selectAll() {
+            playersList.forEach(p => p.selected = true);
+            renderCheckboxList();
+        }
+        
+        function deselectAll() {
+            playersList.forEach(p => p.selected = false);
+            renderCheckboxList();
+        }
+        
+        function parseBelt(beltHtml, stats) {
+            if (!beltHtml || beltHtml === '-' || beltHtml.trim() === '-') {
+                return 'пустой';
+            }
+            
+            function cleanItemName(rawText) {
+                let cleaned = rawText.replace(/\([^)]*\)/g, '');
+                cleaned = cleaned.replace(/<[^>]*>/g, '');
+                cleaned = cleaned.trim();
+                return cleaned;
+            }
+            
+            const items = [];
+            const parts = beltHtml.split(',');
+            
+            for (let part of parts) {
+                let clean = cleanItemName(part);
+                if (clean && clean !== '-' && clean !== '') {
+                    items.push(clean);
+                }
+            }
+            
+            if (items.length === 0) return 'пустой';
+            
+            for (let item of items) {
+                if (item === 'Аура death') {
+                    stats.auras++;
+                }
+            }
+            
+            const countMap = new Map();
+            for (let item of items) {
+                countMap.set(item, (countMap.get(item) || 0) + 1);
+            }
+            
+            const result = [];
+            for (let [item, count] of countMap) {
+                if (count === 1) {
+                    result.push(item);
+                } else {
+                    result.push(`${count} ${item}`);
+                }
+            }
+            
+            return result.join(', ');
+        }
+        
+        function getStyleFromColor(color) {
+            const colorMap = {
+                'green': 'Урон',
+                'red': 'Броня',
+                'blue': 'Уворот',
+                'yellow': 'Элита'
+            };
+            return colorMap[color] || 'Неизвестно';
+        }
+        
+        function getStyleColor(style) {
+            const colors = {
+                'Урон': '#00ff00',
+                'Броня': '#ff4444',
+                'Уворот': '#4488ff',
+                'Элита': '#ffff44'
+            };
+            return colors[style] || '#ffffff';
+        }
+        
+        async function parsePlayer(nickname, playerId, stats) {
+            const url = `https://mobitva.net/equipment.php?id=${playerId}`;
+            
+            try {
+                const response = await fetch(url);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                let weapon = null;
+                let style = null;
+                let belt = null;
+                
+                const rows = doc.querySelectorAll('tr');
+                
+                for (let row of rows) {
+                    const labelCell = row.querySelector('td.label');
+                    if (!labelCell) continue;
+                    
+                    const labelText = labelCell.textContent.trim();
+                    
+                    if (labelText === 'Оружие:') {
+                        const valueCell = row.querySelector('td:last-child');
+                        if (valueCell) {
+                            weapon = valueCell.textContent.trim().replace(/\s+/g, ' ').trim();
+                            if (weapon && weapon !== 'не найдено') {
+                                stats.weapons.set(weapon, (stats.weapons.get(weapon) || 0) + 1);
+                            }
+                        }
+                    }
+                    
+                    if (labelText === 'Доспехи:') {
+                        const valueCell = row.querySelector('td:last-child');
+                        if (valueCell) {
+                            const colorSpan = valueCell.querySelector('span');
+                            if (colorSpan) {
+                                const color = colorSpan.getAttribute('style');
+                                if (color) {
+                                    if (color.includes('green')) style = getStyleFromColor('green');
+                                    else if (color.includes('red')) style = getStyleFromColor('red');
+                                    else if (color.includes('blue')) style = getStyleFromColor('blue');
+                                    else if (color.includes('yellow')) style = getStyleFromColor('yellow');
+                                    else style = 'Неизвестно';
+                                    
+                                    if (stats.styles[style] !== undefined) {
+                                        stats.styles[style]++;
+                                    } else {
+                                        stats.styles['Неизвестно']++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (labelText === 'Пояс:') {
+                        const valueCell = row.querySelector('td:last-child');
+                        if (valueCell) {
+                            const beltHtml = valueCell.innerHTML;
+                            belt = parseBelt(beltHtml, stats);
+                        }
+                    }
+                }
+                
+                if (!weapon) weapon = 'не найдено';
+                if (!style) style = 'Неизвестно';
+                
+                return { nickname, style, weapon, belt, success: true };
+                
+            } catch (error) {
+                return { nickname, style: 'Ошибка', weapon: 'Ошибка', belt: 'Ошибка', success: false };
+            }
+        }
+        
+        async function runParser() {
+            if (isParsing) return;
+            
+            const selectedPlayers = playersList.filter(p => p.selected);
+            
+            if (selectedPlayers.length === 0) {
+                alert('Выберите хотя бы одного персонажа!');
+                return;
+            }
+            
+            isParsing = true;
+            document.getElementById('parseBtn').disabled = true;
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('progress').style.display = 'block';
+            
+            const stats = {
+                styles: { Урон: 0, Броня: 0, Уворот: 0, Элита: 0, Неизвестно: 0 },
+                weapons: new Map(),
+                auras: 0
+            };
+            
+            const results = [];
+            const total = selectedPlayers.length;
+            
+            for (let i = 0; i < total; i++) {
+                const player = selectedPlayers[i];
+                document.getElementById('progressText').innerText = `${i}/${total}`;
+                document.getElementById('currentPlayer').innerText = player.nick;
+                
+                const result = await parsePlayer(player.nick, player.id, stats);
+                results.push(result);
+                
+                if (i < total - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+            
+            document.getElementById('progress').style.display = 'none';
+            
+            let resultsHtml = '<table><tr><th>Ник</th><th>Стиль</th><th>Оружие</th><th>Пояс</th></tr>';
+            for (let result of results) {
+                const color = getStyleColor(result.style);
+                resultsHtml += `<tr style="color: ${color}">
+                    <td>${result.nickname}</td>
+                    <td>${result.style}</td>
+                    <td>${result.weapon}</td>
+                    <td>${result.belt}</td>
+                </tr>`;
+            }
+            resultsHtml += '</table>';
+            document.getElementById('resultsTable').innerHTML = resultsHtml;
+            document.getElementById('results').style.display = 'block';
+            
+            let statsHtml = '';
+            
+            statsHtml += '<div class="stat-item"><span class="stat-label">🎨 СТИЛИ:</span></div>';
+            for (let [style, count] of Object.entries(stats.styles)) {
+                if (count > 0) {
+                    const color = getStyleColor(style);
+                    statsHtml += `<div class="stat-item" style="color: ${color}; margin-left: 20px;">${style}: ${count}</div>`;
+                }
+            }
+            
+            statsHtml += '<div class="stat-item"><span class="stat-label">⚔️ ОРУЖИЕ:</span></div>';
+            const sortedWeapons = Array.from(stats.weapons.entries()).sort((a, b) => b[1] - a[1]);
+            for (let [weapon, count] of sortedWeapons) {
+                statsHtml += `<div class="stat-item" style="margin-left: 20px;">${count} x ${weapon}</div>`;
+            }
+            
+            statsHtml += `<div class="stat-item"><span class="stat-label">✨ АУРЫ:</span></div>`;
+            statsHtml += `<div class="stat-item auras" style="margin-left: 20px;">Аура death: ${stats.auras}</div>`;
+            
+            document.getElementById('statsContent').innerHTML = statsHtml;
+            document.getElementById('stats').style.display = 'block';
+            
+            isParsing = false;
+            document.getElementById('parseBtn').disabled = false;
+        }
+        
+        function clearResults() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('progress').style.display = 'none';
+        }
+        
+        document.getElementById('loadPlayersBtn').addEventListener('click', loadPlayersFromText);
+        document.getElementById('selectAllBtn').addEventListener('click', selectAll);
+        document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
+        document.getElementById('saveSelectionBtn').addEventListener('click', saveSelectionToLocalStorage);
+        document.getElementById('parseBtn').addEventListener('click', runParser);
+        document.getElementById('clearBtn').addEventListener('click', clearResults);
+        
+        if (playersList.length === 0) {
+            const defaultText = document.getElementById('players').value;
+            const lines = defaultText.split('\n');
+            for (let line of lines) {
+                line = line.trim();
+                if (line) {
+                    const parts = line.split('|');
+                    if (parts.length === 2) {
+                        playersList.push({
+                            nick: parts[0].trim(),
+                            id: parseInt(parts[1].trim()),
+                            selected: true
+                        });
+                    }
+                }
+            }
+            loadSelectionFromLocalStorage();
+            renderCheckboxList();
+            if (playersList.length > 0) {
+                document.getElementById('parseBtn').disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>
