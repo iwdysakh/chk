@@ -11,23 +11,6 @@
         .card { background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         h1 { font-size: 22px; margin-bottom: 16px; color: #fff; }
         h2 { font-size: 18px; margin-bottom: 12px; color: #ccc; }
-        
-        /* Редактор списка */
-        .editor {
-            margin-bottom: 16px;
-        }
-        .editor textarea {
-            width: 100%;
-            padding: 10px;
-            background: #0f3460;
-            border: 1px solid #2d2d44;
-            color: #eee;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            resize: vertical;
-        }
-        
         .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; max-height: 350px; overflow-y: auto; padding: 4px; }
         .player-item { background: #0f3460; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .player-item:hover { background: #1a4a7a; }
@@ -37,7 +20,6 @@
         button { background: #e94560; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
         button:hover { opacity: 0.85; }
         button.primary { background: #0f3460; }
-        button.secondary { background: #533483; }
         .progress-bar-container { background: #2d2d44; border-radius: 20px; height: 20px; overflow: hidden; margin: 10px 0; }
         .progress-bar { background: #e94560; height: 100%; width: 0%; transition: width 0.3s; }
         .progress-text { font-size: 12px; color: #aaa; margin-top: 5px; text-align: center; }
@@ -76,17 +58,11 @@
         </div>
 
         <div class="card">
-            <div class="editor">
-                <textarea id="playersEditor" rows="4" placeholder="ник|id&#10;Aruta|500&#10;НовыйПерс|123"></textarea>
-            </div>
-            
             <div class="button-group">
-                <button id="loadPlayersBtn" class="secondary">📋 ЗАГРУЗИТЬ СПИСОК</button>
                 <button id="selectAllBtn">✅ Выбрать всех</button>
                 <button id="deselectAllBtn">❌ Снять всех</button>
                 <button id="saveSelectionBtn">💾 Сохранить выбор</button>
             </div>
-            
             <div id="playersGrid" class="players-grid"></div>
             <div class="status" id="selectedCount"></div>
         </div>
@@ -118,6 +94,7 @@
         let playersList = [];
         let isParsing = false;
 
+        // ===== РЕДАКТИРУЙ СПИСОК ЗДЕСЬ =====
         const DEFAULT_PLAYERS = [
             "Aruta|500",
             "𝓑𝓐𝓡𝓜𝓐𝓛𝓔𝓨|147",
@@ -126,30 +103,24 @@
             "GiBRiDiK|235",
             "ᙖᗝᙁᗯᙓᘜᕼᕠᕫ|137",
             "Макаров|298",
-            "PeRvoRoDNi|350"
+            "PeRvoRoDNi|350",
+            "Punisher|68"
         ];
+        // =================================
 
-        // Сохранение в localStorage
         function saveToLocalStorage() {
             localStorage.setItem('mobitva_players', JSON.stringify(playersList.map(p => ({ nick: p.nick, id: p.id, selected: p.selected }))));
-            localStorage.setItem('mobitva_editor', document.getElementById('playersEditor').value);
         }
 
         function loadFromLocalStorage() {
             const saved = localStorage.getItem('mobitva_players');
-            const savedEditor = localStorage.getItem('mobitva_editor');
-            
-            if (savedEditor) {
-                document.getElementById('playersEditor').value = savedEditor;
-            } else {
-                document.getElementById('playersEditor').value = DEFAULT_PLAYERS.join('\n');
-            }
-            
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    if (parsed.length) {
-                        playersList = parsed;
+                    if (parsed.length && parsed.length === playersList.length) {
+                        for (let i = 0; i < playersList.length; i++) {
+                            playersList[i].selected = parsed[i]?.selected ?? true;
+                        }
                         renderPlayersGrid();
                         return true;
                     }
@@ -158,32 +129,19 @@
             return false;
         }
 
-        function loadPlayersFromEditor() {
-            const text = document.getElementById('playersEditor').value;
-            const lines = text.split('\n');
-            const newPlayers = [];
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (line) {
-                    const parts = line.split('|');
-                    if (parts.length === 2) {
-                        newPlayers.push({
-                            nick: parts[0].trim(),
-                            id: parseInt(parts[1].trim()),
-                            selected: true
-                        });
-                    }
+        function initDefaultPlayers() {
+            playersList = [];
+            for (let line of DEFAULT_PLAYERS) {
+                const parts = line.split('|');
+                if (parts.length === 2) {
+                    playersList.push({
+                        nick: parts[0].trim(),
+                        id: parseInt(parts[1].trim()),
+                        selected: true
+                    });
                 }
             }
-            
-            if (newPlayers.length > 0) {
-                playersList = newPlayers;
-                renderPlayersGrid();
-                saveToLocalStorage();
-            } else {
-                alert('Нет валидных персонажей! Формат: ник|id');
-            }
+            renderPlayersGrid();
         }
 
         function renderPlayersGrid() {
@@ -405,16 +363,13 @@
             parseBtn.innerText = '🚀 ЗАПУСТИТЬ ПАРСИНГ';
         }
 
-        document.getElementById('loadPlayersBtn').onclick = loadPlayersFromEditor;
         document.getElementById('selectAllBtn').onclick = selectAll;
         document.getElementById('deselectAllBtn').onclick = deselectAll;
         document.getElementById('saveSelectionBtn').onclick = saveSelection;
         document.getElementById('parseBtn').onclick = runParser;
 
-        if (!loadFromLocalStorage()) {
-            document.getElementById('playersEditor').value = DEFAULT_PLAYERS.join('\n');
-            loadPlayersFromEditor();
-        }
+        initDefaultPlayers();
+        loadFromLocalStorage();
     </script>
 </body>
 </html>
