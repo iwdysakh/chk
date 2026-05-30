@@ -221,7 +221,7 @@
 
         async function parsePlayer(nick, id, stats) {
             try {
-                const proxyUrl = 'http://136.244.71.214/proxy.php?url=';
+                const proxyUrl = 'https://136.244.71.214/proxy.php?url=';
                 const targetUrl = `https://mobitva.net/equipment.php?id=${id}`;
                 const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
                 const html = await response.text();
