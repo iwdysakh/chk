@@ -220,47 +220,68 @@
         }
 
         async function parsePlayer(nick, id, stats) {
-            try {
-                const proxyUrl = 'https://136.244.71.214/proxy.php?url=';
-                const targetUrl = `https://mobitva.net/equipment.php?id=${id}`;
-                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-                const html = await response.text();
-                
-                let weapon = 'не найдено';
-                let style = 'Неизвестно';
-                let belt = 'пустой';
-                
-                // Парсим оружие
-                const weaponMatch = html.match(/Оружие:<\/td>.*?<span[^>]*>(.*?)<\/span>/i);
-                if (weaponMatch && weaponMatch[1]) {
-                    weapon = weaponMatch[1].trim();
-                    if (weapon && weapon !== '-' && weapon !== '—') {
-                        stats.weapons.set(weapon, (stats.weapons.get(weapon) || 0) + 1);
-                    }
-                }
-                
-                // Парсим стиль по цвету доспехов
-                const armorMatch = html.match(/Доспехи:<\/td>.*?color:(\w+)/i);
-                if (armorMatch && armorMatch[1]) {
-                    style = getStyleByColor(armorMatch[1].toLowerCase());
-                    stats.styles[style] = (stats.styles[style] || 0) + 1;
-                }
-                
-                // Парсим пояс
-                const beltMatch = html.match(/Пояс:<\/td>.*?>(.*?)<\/td>/i);
-                if (beltMatch && beltMatch[1]) {
-                    let beltRaw = beltMatch[1].trim();
-                    if (beltRaw !== '-' && beltRaw !== '—') {
-                        belt = parseBelt(beltRaw, stats);
-                    }
-                }
-                
-                return { nickname: nick, style, weapon, belt };
-            } catch(e) {
-                console.error(`Ошибка ${nick}:`, e);
-                return { nickname: nick, style: 'Ошибка', weapon: 'Ошибка', belt: 'Ошибка' };
+    try {
+        const proxyUrl = 'https://136.244.71.214/proxy.php?url=';
+        const targetUrl = `https://mobitva.net/equipment.php?id=${id}`;
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+        const html = await response.text();
+        
+        let weapon = 'не найдено';
+        let style = 'Неизвестно';
+        let belt = 'пустой';
+        
+        // ПАРСИНГ ОРУЖИЯ - теперь работает и с цветом, и без
+        const weaponMatch = html.match(/Оружие:<\/td>.*?<td[^>]*>(?:<span[^>]*>)?(.*?)(?:<\/span>)?<\/td>/i);
+        if (weaponMatch && weaponMatch[1]) {
+            let rawWeapon = weaponMatch[1].trim();
+            rawWeapon = rawWeapon.replace(/<[^>]*>/g, '').trim();
+            if (rawWeapon && rawWeapon !== '-' && rawWeapon !== '—') {
+                weapon = rawWeapon;
+                stats.weapons.set(weapon, (stats.weapons.get(weapon) || 0) + 1);
             }
         }
+        
+        // ПАРСИНГ СТИЛЯ (только по доспехам)
+        const armorMatch = html.match(/Доспехи:<\/td>.*?color:(\w+)/i);
+        if (armorMatch && armorMatch[1]) {
+            const color = armorMatch[1].toLowerCase();
+            if (color === 'green') style = 'Урон';
+            else if (color === 'red') style = 'Броня';
+            else if (color === 'blue') style = 'Уворот';
+            else if (color === 'yellow') style = 'Элита';
+            stats.styles[style] = (stats.styles[style] || 0) + 1;
+        }
+        
+        // ПАРСИНГ ПОЯСА
+        const beltMatch = html.match(/Пояс:<\/td>.*?>(.*?)<\/td>/i);
+        if (beltMatch && beltMatch[1]) {
+            let beltRaw = beltMatch[1].trim();
+            if (beltRaw !== '-' && beltRaw !== '—') {
+                const items = [];
+                const parts = beltRaw.split(',');
+                for (let part of parts) {
+                    let clean = part.replace(/\([^)]*\)/g, '').replace(/<[^>]*>/g, '').trim();
+                    if (clean && clean !== '-' && clean !== '—') {
+                        items.push(clean);
+                        if (clean === 'Аура death') stats.auras++;
+                    }
+                }
+                if (items.length > 0) {
+                    const countMap = new Map();
+                    for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
+                    const result = [];
+                    for (let [item, cnt] of countMap) result.push(cnt === 1 ? item : `${cnt} ${item}`);
+                    belt = result.join(', ');
+                }
+            }
+        }
+        
+        return { nickname: nick, style, weapon, belt };
+    } catch(e) {
+        console.error(`Ошибка ${nick}:`, e);
+        return { nickname: nick, style: 'Ошибка', weapon: 'Ошибка', belt: 'Ошибка' };
+    }
+}
 
         async function runParser() {
             if (isParsing) return;
