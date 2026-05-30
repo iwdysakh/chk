@@ -54,7 +54,6 @@
     <div class="container">
         <div class="card">
             <h1>🎯 MOBITVA PARSER</h1>
-            <div class="status" style="color: #4ade80;">✅ Работает через прокси</div>
         </div>
 
         <div class="card">
@@ -102,7 +101,8 @@
             "GiBRiDiK|235",
             "ᙖᗝᙁᗯᙓᘜᕼᕠᕫ|137",
             "Макаров|298",
-            "PeRvoRoDNi|350"
+            "PeRvoRoDNi|350",
+            "Punisher|68"
         ];
 
         function saveToLocalStorage() {
@@ -188,29 +188,6 @@
             setTimeout(() => btn.innerText = originalText, 1500);
         }
 
-        function parseBelt(beltText, stats) {
-            if (!beltText || beltText === '-' || beltText.trim() === '-') return 'пустой';
-            
-            const items = [];
-            const parts = beltText.split(',');
-            for (let part of parts) {
-                let clean = part.replace(/\([^)]*\)/g, '').replace(/<[^>]*>/g, '').trim();
-                if (clean && clean !== '-' && clean !== '—') {
-                    items.push(clean);
-                    if (clean === 'Аура death') stats.auras++;
-                }
-            }
-            
-            if (items.length === 0) return 'пустой';
-            
-            const countMap = new Map();
-            for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
-            
-            const result = [];
-            for (let [item, cnt] of countMap) result.push(cnt === 1 ? item : `${cnt} ${item}`);
-            return result.join(', ');
-        }
-
         function getStyleByColor(color) {
             if (color === 'green') return 'Урон';
             if (color === 'red') return 'Броня';
@@ -220,68 +197,77 @@
         }
 
         async function parsePlayer(nick, id, stats) {
-    try {
-        const proxyUrl = 'https://136.244.71.214/proxy.php?url=';
-        const targetUrl = `https://mobitva.net/equipment.php?id=${id}`;
-        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-        const html = await response.text();
-        
-        let weapon = 'не найдено';
-        let style = 'Неизвестно';
-        let belt = 'пустой';
-        
-        // ПАРСИНГ ОРУЖИЯ - теперь работает и с цветом, и без
-        const weaponMatch = html.match(/Оружие:<\/td>.*?<td[^>]*>(?:<span[^>]*>)?(.*?)(?:<\/span>)?<\/td>/i);
-        if (weaponMatch && weaponMatch[1]) {
-            let rawWeapon = weaponMatch[1].trim();
-            rawWeapon = rawWeapon.replace(/<[^>]*>/g, '').trim();
-            if (rawWeapon && rawWeapon !== '-' && rawWeapon !== '—') {
-                weapon = rawWeapon;
-                stats.weapons.set(weapon, (stats.weapons.get(weapon) || 0) + 1);
-            }
-        }
-        
-        // ПАРСИНГ СТИЛЯ (только по доспехам)
-        const armorMatch = html.match(/Доспехи:<\/td>.*?color:(\w+)/i);
-        if (armorMatch && armorMatch[1]) {
-            const color = armorMatch[1].toLowerCase();
-            if (color === 'green') style = 'Урон';
-            else if (color === 'red') style = 'Броня';
-            else if (color === 'blue') style = 'Уворот';
-            else if (color === 'yellow') style = 'Элита';
-            stats.styles[style] = (stats.styles[style] || 0) + 1;
-        }
-        
-        // ПАРСИНГ ПОЯСА
-        const beltMatch = html.match(/Пояс:<\/td>.*?>(.*?)<\/td>/i);
-        if (beltMatch && beltMatch[1]) {
-            let beltRaw = beltMatch[1].trim();
-            if (beltRaw !== '-' && beltRaw !== '—') {
-                const items = [];
-                const parts = beltRaw.split(',');
-                for (let part of parts) {
-                    let clean = part.replace(/\([^)]*\)/g, '').replace(/<[^>]*>/g, '').trim();
-                    if (clean && clean !== '-' && clean !== '—') {
-                        items.push(clean);
-                        if (clean === 'Аура death') stats.auras++;
+            try {
+                const proxyUrl = 'https://136.244.71.214/proxy.php?url=';
+                const targetUrl = `https://mobitva.net/equipment.php?id=${id}`;
+                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+                const html = await response.text();
+                
+                let weapon = 'не найдено';
+                let style = 'Неизвестно';
+                let belt = 'пустой';
+                
+                // Парсинг оружия
+                const weaponMatch = html.match(/Оружие:<\/td>.*?<td[^>]*>(?:<span[^>]*>)?(.*?)(?:<\/span>)?<\/td>/i);
+                if (weaponMatch && weaponMatch[1]) {
+                    let rawWeapon = weaponMatch[1].trim();
+                    rawWeapon = rawWeapon.replace(/<[^>]*>/g, '').trim();
+                    if (rawWeapon && rawWeapon !== '-' && rawWeapon !== '—') {
+                        weapon = rawWeapon;
+                        stats.weapons.set(weapon, (stats.weapons.get(weapon) || 0) + 1);
                     }
                 }
-                if (items.length > 0) {
-                    const countMap = new Map();
-                    for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
-                    const result = [];
-                    for (let [item, cnt] of countMap) result.push(cnt === 1 ? item : `${cnt} ${item}`);
-                    belt = result.join(', ');
+                
+                // Парсинг стиля
+                const armorMatch = html.match(/Доспехи:<\/td>.*?color:(\w+)/i);
+                if (armorMatch && armorMatch[1]) {
+                    const color = armorMatch[1].toLowerCase();
+                    if (color === 'green') style = 'Урон';
+                    else if (color === 'red') style = 'Броня';
+                    else if (color === 'blue') style = 'Уворот';
+                    else if (color === 'yellow') style = 'Элита';
+                    stats.styles[style] = (stats.styles[style] || 0) + 1;
                 }
+                
+                // Парсинг пояса + сбор предметов
+                const beltMatch = html.match(/Пояс:<\/td>.*?>(.*?)<\/td>/i);
+                if (beltMatch && beltMatch[1]) {
+                    let beltRaw = beltMatch[1].trim();
+                    if (beltRaw !== '-' && beltRaw !== '—') {
+                        const items = [];
+                        const parts = beltRaw.split(',');
+                        for (let part of parts) {
+                            let clean = part.replace(/\([^)]*\)/g, '').replace(/<[^>]*>/g, '').trim();
+                            if (clean && clean !== '-' && clean !== '—') {
+                                items.push(clean);
+                                
+                                // Сбор Аур
+                                if (clean === 'Аура death') {
+                                    stats.auras++;
+                                }
+                                
+                                // Сбор ВСЕХ предметов с поясов (зелья, стрелы, и т.д.)
+                                if (clean !== 'пустой' && clean !== '-') {
+                                    stats.items.set(clean, (stats.items.get(clean) || 0) + 1);
+                                }
+                            }
+                        }
+                        if (items.length > 0) {
+                            const countMap = new Map();
+                            for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
+                            const result = [];
+                            for (let [item, cnt] of countMap) result.push(cnt === 1 ? item : `${cnt} ${item}`);
+                            belt = result.join(', ');
+                        }
+                    }
+                }
+                
+                return { nickname: nick, style, weapon, belt };
+            } catch(e) {
+                console.error(`Ошибка ${nick}:`, e);
+                return { nickname: nick, style: 'Ошибка', weapon: 'Ошибка', belt: 'Ошибка' };
             }
         }
-        
-        return { nickname: nick, style, weapon, belt };
-    } catch(e) {
-        console.error(`Ошибка ${nick}:`, e);
-        return { nickname: nick, style: 'Ошибка', weapon: 'Ошибка', belt: 'Ошибка' };
-    }
-}
 
         async function runParser() {
             if (isParsing) return;
@@ -300,7 +286,7 @@
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
             
-            const stats = { styles: {}, weapons: new Map(), auras: 0 };
+            const stats = { styles: {}, weapons: new Map(), auras: 0, items: new Map() };
             const results = [];
             
             for (let i = 0; i < selected.length; i++) {
@@ -318,6 +304,7 @@
             progressText.innerText = `✅ Готово! ${selected.length}/${selected.length}`;
             setTimeout(() => document.getElementById('progressArea').style.display = 'none', 1000);
             
+            // ТАБЛИЦА РЕЗУЛЬТАТОВ
             let tableHtml = '<table><thead><tr><th>Ник</th><th>Стиль</th><th>Оружие</th><th>Пояс</th></tr></thead><tbody>';
             for (let r of results) {
                 let styleClass = '';
@@ -338,7 +325,10 @@
             document.getElementById('resultsTable').innerHTML = tableHtml;
             document.getElementById('resultsArea').style.display = 'block';
             
+            // СТАТИСТИКА
             let statsHtml = '<div class="stats-grid">';
+            
+            // Стили
             statsHtml += '<div class="stat-block"><h3>🎨 СТИЛИ</h3><div class="stat-list">';
             for (let [s, c] of Object.entries(stats.styles)) {
                 let styleClass = '';
@@ -350,6 +340,7 @@
             }
             statsHtml += '</div></div>';
             
+            // Оружие
             statsHtml += '<div class="stat-block"><h3>⚔️ ОРУЖИЕ</h3><div class="stat-list">';
             const sortedWeapons = [...stats.weapons.entries()].sort((a,b) => b[1] - a[1]);
             for (let [w, c] of sortedWeapons.slice(0, 15)) {
@@ -358,7 +349,25 @@
             if (sortedWeapons.length > 15) statsHtml += `<div class="stat-item"><span>...</span><span>+${sortedWeapons.length - 15}</span></div>`;
             statsHtml += '</div></div>';
             
-            statsHtml += '<div class="stat-block"><h3>✨ АУРЫ</h3><div class="auras-count">Аура death: ' + stats.auras + '</div></div></div>';
+            // Ауры
+            statsHtml += '<div class="stat-block"><h3>✨ АУРЫ</h3><div class="auras-count">Аура death: ' + stats.auras + '</div></div>';
+            
+            // ВСЕ ПРЕДМЕТЫ С ПОЯСОВ (зелья, стрелы и т.д.)
+            statsHtml += '<div class="stat-block"><h3>🧪 ПРЕДМЕТЫ (с поясов)</h3><div class="stat-list">';
+            if (stats.items.size > 0) {
+                const sortedItems = [...stats.items.entries()].sort((a,b) => b[1] - a[1]);
+                for (let [item, count] of sortedItems.slice(0, 20)) {
+                    statsHtml += `<div class="stat-item"><span>${item}</span><span>${count} шт</span></div>`;
+                }
+                if (sortedItems.length > 20) {
+                    statsHtml += `<div class="stat-item"><span>...</span><span>+${sortedItems.length - 20}</span></div>`;
+                }
+            } else {
+                statsHtml += '<div class="stat-item"><span>Нет предметов</span><span></span></div>';
+            }
+            statsHtml += '</div></div>';
+            
+            statsHtml += '</div>';
             document.getElementById('statsContent').innerHTML = statsHtml;
             document.getElementById('statsArea').style.display = 'block';
             
