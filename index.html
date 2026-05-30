@@ -5,633 +5,354 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobitva Parser</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Courier New', monospace;
-            background: #0a0e1a;
-            color: #00ff00;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            color: #ffff00;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        .controls {
-            background: #1a1e2a;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #00ff00;
-        }
-        
-        .section {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #ffff00;
-            font-weight: bold;
-        }
-        
-        textarea {
-            width: 100%;
-            padding: 10px;
-            background: #0a0e1a;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            border-radius: 4px;
-        }
-        
-        textarea {
-            height: 200px;
-            font-size: 12px;
-        }
-        
-        button {
-            background: #00ff00;
-            color: #0a0e1a;
-            border: none;
-            padding: 10px 20px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-right: 10px;
-            font-size: 14px;
-        }
-        
-        button:hover {
-            background: #00cc00;
-        }
-        
-        button:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-        
-        .checkbox-group {
-            background: #0a0e1a;
-            border: 1px solid #00ff00;
-            border-radius: 4px;
-            padding: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 10px;
-        }
-        
-        .checkbox-item {
-            margin: 5px 0;
-            padding: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-        
-        .checkbox-item:hover {
-            background: #1a1e2a;
-        }
-        
-        .checkbox-item input {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-        
-        .checkbox-item label {
-            margin: 0;
-            cursor: pointer;
-            color: #00ff00;
-            font-weight: normal;
-        }
-        
-        .select-buttons {
-            margin-bottom: 10px;
-        }
-        
-        .select-buttons button {
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-right: 5px;
-        }
-        
-        .progress {
-            background: #1a1e2a;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .results {
-            background: #1a1e2a;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            display: none;
-        }
-        
-        .stats {
-            background: #1a1e2a;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        
-        th, td {
-            border: 1px solid #00ff00;
-            padding: 8px;
-            text-align: left;
-        }
-        
-        th {
-            background: #00ff00;
-            color: #0a0e1a;
-            font-weight: bold;
-        }
-        
-        .status {
-            color: #ffff00;
-            margin-top: 10px;
-            font-size: 12px;
-        }
-        
-        .stat-item {
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        
-        .stat-label {
-            color: #ffff00;
-            font-weight: bold;
-        }
-        
-        .auras {
-            color: #ff44ff;
-        }
-        
-        .save-status {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #00ff00;
-            color: #0a0e1a;
-            padding: 10px 15px;
-            border-radius: 4px;
-            font-weight: bold;
-            display: none;
-            z-index: 1000;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace; background: #1a1a2e; color: #eee; padding: 16px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card { background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        h1 { font-size: 22px; margin-bottom: 16px; color: #fff; }
+        h2 { font-size: 18px; margin-bottom: 12px; color: #ccc; }
+        .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; max-height: 350px; overflow-y: auto; padding: 4px; }
+        .player-item { background: #0f3460; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .player-item:hover { background: #1a4a7a; }
+        .player-item input { width: 18px; height: 18px; cursor: pointer; margin: 0; pointer-events: none; }
+        .player-item label { flex: 1; cursor: pointer; font-size: 14px; pointer-events: none; }
+        .button-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+        button { background: #e94560; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        button:hover { opacity: 0.85; }
+        button.primary { background: #0f3460; }
+        .progress-bar-container { background: #2d2d44; border-radius: 20px; height: 20px; overflow: hidden; margin: 10px 0; }
+        .progress-bar { background: #e94560; height: 100%; width: 0%; transition: width 0.3s; }
+        .progress-text { font-size: 12px; color: #aaa; margin-top: 5px; text-align: center; }
+        .results-table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { border: 1px solid #2d2d44; padding: 8px 6px; text-align: left; }
+        th { background: #0f3460; color: #e94560; }
+        tr:hover { background: #1a1a3e; }
+        .style-Урон { color: #4ade80; font-weight: 500; }
+        .style-Броня { color: #f87171; font-weight: 500; }
+        .style-Уворот { color: #60a5fa; font-weight: 500; }
+        .style-Элита { color: #facc15; font-weight: 500; }
+        .error-text { color: #f87171; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .stat-block { background: #0f3460; border-radius: 8px; padding: 12px; }
+        .stat-block h3 { font-size: 13px; margin-bottom: 8px; color: #e94560; }
+        .stat-list { font-size: 12px; line-height: 1.6; max-height: 150px; overflow-y: auto; }
+        .stat-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #2d2d44; }
+        .auras-count { font-size: 20px; font-weight: bold; color: #c084fc; text-align: center; padding: 10px; }
+        .status { font-size: 12px; color: #aaa; margin-top: 8px; text-align: center; }
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .card { padding: 12px; }
+            .players-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .player-item label { font-size: 12px; }
+            button { padding: 6px 12px; font-size: 12px; }
+            th, td { font-size: 10px; padding: 6px 4px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎯 MOBITVA PARSER v3.1</h1>
-        
-        <div class="controls">
-            <div class="section">
-                <label>👥 СПИСОК ПЕРСОНАЖЕЙ (ник|id)</label>
-                <textarea id="players" placeholder="Aruta|500
-𝓑𝓐𝓡𝓜𝓐𝓛𝓔𝓨|147
-FREEMAN|372
-KROP|166
-GiBRiDiK|235
-ᙖᗝᙁᗯᙓᘜᕼᕠᕫ|137
-Макаров|298
-PeRvoRoDNi|350"></textarea>
-                <div class="status">📝 Формат: ник|id (каждый персонаж с новой строки)</div>
+        <div class="card">
+            <h1>🎯 MOBITVA PARSER</h1>
+            <div class="status" style="color: #4ade80;">✅ Работает через прокси</div>
+        </div>
+
+        <div class="card">
+            <div class="button-group">
+                <button id="selectAllBtn">✅ Выбрать всех</button>
+                <button id="deselectAllBtn">❌ Снять всех</button>
+                <button id="saveSelectionBtn">💾 Сохранить выбор</button>
             </div>
-            
-            <div class="section">
-                <label>✅ ВЫБЕРИ ПЕРСОНАЖЕЙ ДЛЯ ПАРСИНГА</label>
-                <div class="select-buttons">
-                    <button id="selectAllBtn">✅ ВЫБРАТЬ ВСЕХ</button>
-                    <button id="deselectAllBtn">❌ СНЯТЬ ВСЕХ</button>
-                    <button id="loadPlayersBtn">🔄 ЗАГРУЗИТЬ ИЗ СПИСКА</button>
-                    <button id="saveSelectionBtn">💾 СОХРАНИТЬ ВЫБОР</button>
+            <div id="playersGrid" class="players-grid"></div>
+            <div class="status" id="selectedCount"></div>
+        </div>
+
+        <div class="card">
+            <button id="parseBtn" class="primary">🚀 ЗАПУСТИТЬ ПАРСИНГ</button>
+            <div id="progressArea" style="display: none;">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
                 </div>
-                <div id="checkboxList" class="checkbox-group">
-                    <div style="color: #666; text-align: center;">Нажми "Загрузить из списка"</div>
-                </div>
-                <div class="status" id="selectedCount">📊 Выбрано: 0 персонажей</div>
-            </div>
-            
-            <div class="section">
-                <button id="parseBtn" disabled>🚀 ЗАПУСТИТЬ ПАРСИНГ</button>
-                <button id="clearBtn">🗑️ ОЧИСТИТЬ РЕЗУЛЬТАТЫ</button>
+                <div class="progress-text" id="progressText">0/0</div>
             </div>
         </div>
-        
-        <div id="progress" class="progress">
-            <div>📊 ПРОГРЕСС: <span id="progressText">0/0</span></div>
-            <div>👤 СЕЙЧАС: <span id="currentPlayer">-</span></div>
+
+        <div id="resultsArea" class="card" style="display: none;">
+            <h2>📋 РЕЗУЛЬТАТЫ</h2>
+            <div class="results-table-wrapper">
+                <div id="resultsTable"></div>
+            </div>
         </div>
-        
-        <div id="results" class="results">
-            <h2>📋 РЕЗУЛЬТАТЫ ПАРСИНГА</h2>
-            <div id="resultsTable"></div>
-        </div>
-        
-        <div id="stats" class="stats">
-            <h2>📊 ФИНАЛЬНАЯ СТАТИСТИКА</h2>
+
+        <div id="statsArea" class="card" style="display: none;">
+            <h2>📊 СТАТИСТИКА</h2>
             <div id="statsContent"></div>
         </div>
     </div>
-    
-    <div id="saveStatus" class="save-status">💾 Выбор сохранен!</div>
-    
+
     <script>
         let playersList = [];
         let isParsing = false;
-        
-        function showSaveStatus() {
-            const status = document.getElementById('saveStatus');
-            status.style.display = 'block';
-            setTimeout(() => {
-                status.style.display = 'none';
-            }, 2000);
+
+        const DEFAULT_PLAYERS = [
+            "Aruta|500",
+            "𝓑𝓐𝓡𝓜𝓐𝓛𝓔𝓨|147",
+            "FREEMAN|372",
+            "KROP|166",
+            "GiBRiDiK|235",
+            "ᙖᗝᙁᗯᙓᘜᕼᕠᕫ|137",
+            "Макаров|298",
+            "PeRvoRoDNi|350"
+        ];
+
+        function saveToLocalStorage() {
+            localStorage.setItem('mobitva_players', JSON.stringify(playersList.map(p => ({ nick: p.nick, id: p.id, selected: p.selected }))));
         }
-        
-        function saveSelectionToLocalStorage() {
-            const selectionData = playersList.map(p => ({
-                nick: p.nick,
-                id: p.id,
-                selected: p.selected
-            }));
-            localStorage.setItem('mobitva_selection', JSON.stringify(selectionData));
-            showSaveStatus();
-        }
-        
-        function loadSelectionFromLocalStorage() {
-            const saved = localStorage.getItem('mobitva_selection');
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('mobitva_players');
             if (saved) {
                 try {
-                    const savedData = JSON.parse(saved);
-                    for (let savedPlayer of savedData) {
-                        const found = playersList.find(p => p.id === savedPlayer.id && p.nick === savedPlayer.nick);
-                        if (found) {
-                            found.selected = savedPlayer.selected;
-                        }
+                    const parsed = JSON.parse(saved);
+                    if (parsed.length) {
+                        playersList = parsed;
+                        renderPlayersGrid();
+                        return true;
                     }
-                    renderCheckboxList();
-                } catch(e) {
-                    console.error('Ошибка загрузки сохранений:', e);
+                } catch(e) {}
+            }
+            return false;
+        }
+
+        function initDefaultPlayers() {
+            playersList = [];
+            for (let line of DEFAULT_PLAYERS) {
+                const parts = line.split('|');
+                if (parts.length === 2) {
+                    playersList.push({
+                        nick: parts[0].trim(),
+                        id: parseInt(parts[1].trim()),
+                        selected: true
+                    });
                 }
             }
+            renderPlayersGrid();
         }
-        
-        function loadPlayersFromText() {
-            const text = document.getElementById('players').value;
-            const lines = text.split('\n');
-            const newPlayers = [];
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (line) {
-                    const parts = line.split('|');
-                    if (parts.length === 2) {
-                        newPlayers.push({
-                            nick: parts[0].trim(),
-                            id: parseInt(parts[1].trim()),
-                            selected: true
-                        });
-                    }
-                }
-            }
-            
-            if (newPlayers.length > 0) {
-                playersList = newPlayers;
-                loadSelectionFromLocalStorage();
-                renderCheckboxList();
-                document.getElementById('parseBtn').disabled = false;
-            } else {
-                alert('Нет валидных персонажей! Формат: ник|id');
-            }
-        }
-        
-        function renderCheckboxList() {
-            const container = document.getElementById('checkboxList');
+
+        function renderPlayersGrid() {
+            const container = document.getElementById('playersGrid');
             let html = '';
-            
             for (let i = 0; i < playersList.length; i++) {
-                const player = playersList[i];
-                html += `
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="player_${i}" data-index="${i}" ${player.selected ? 'checked' : ''}>
-                        <label for="player_${i}">
-                            ${player.nick} | ID: ${player.id}
-                        </label>
-                    </div>
-                `;
+                const p = playersList[i];
+                html += `<div class="player-item" data-index="${i}">
+                            <input type="checkbox" class="player-checkbox" id="chk_${i}" ${p.selected ? 'checked' : ''}>
+                            <label for="chk_${i}">${p.nick}</label>
+                        </div>`;
             }
-            
             container.innerHTML = html;
-            
-            const checkboxes = document.querySelectorAll('#checkboxList input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const index = parseInt(this.getAttribute('data-index'));
-                    playersList[index].selected = this.checked;
+            document.querySelectorAll('.player-item').forEach(div => {
+                div.addEventListener('click', function() {
+                    const cb = this.querySelector('.player-checkbox');
+                    cb.checked = !cb.checked;
+                    const idx = parseInt(this.getAttribute('data-index'));
+                    playersList[idx].selected = cb.checked;
                     updateSelectedCount();
+                    saveToLocalStorage();
                 });
             });
-            
             updateSelectedCount();
         }
-        
+
         function updateSelectedCount() {
             const selected = playersList.filter(p => p.selected).length;
-            document.getElementById('selectedCount').innerHTML = `📊 Выбрано: ${selected} из ${playersList.length} персонажей`;
+            document.getElementById('selectedCount').innerHTML = `📊 Выбрано: ${selected} из ${playersList.length}`;
         }
-        
+
         function selectAll() {
             playersList.forEach(p => p.selected = true);
-            renderCheckboxList();
+            renderPlayersGrid();
+            saveToLocalStorage();
         }
-        
+
         function deselectAll() {
             playersList.forEach(p => p.selected = false);
-            renderCheckboxList();
+            renderPlayersGrid();
+            saveToLocalStorage();
         }
-        
-        function parseBelt(beltHtml, stats) {
-            if (!beltHtml || beltHtml === '-' || beltHtml.trim() === '-') {
-                return 'пустой';
-            }
-            
-            function cleanItemName(rawText) {
-                let cleaned = rawText.replace(/\([^)]*\)/g, '');
-                cleaned = cleaned.replace(/<[^>]*>/g, '');
-                cleaned = cleaned.trim();
-                return cleaned;
-            }
+
+        function saveSelection() {
+            saveToLocalStorage();
+            const btn = document.getElementById('saveSelectionBtn');
+            const originalText = btn.innerText;
+            btn.innerText = '✓ Сохранено!';
+            setTimeout(() => btn.innerText = originalText, 1500);
+        }
+
+        function parseBelt(beltText, stats) {
+            if (!beltText || beltText === '-' || beltText.trim() === '-') return 'пустой';
             
             const items = [];
-            const parts = beltHtml.split(',');
-            
+            const parts = beltText.split(',');
             for (let part of parts) {
-                let clean = cleanItemName(part);
-                if (clean && clean !== '-' && clean !== '') {
+                let clean = part.replace(/\([^)]*\)/g, '').replace(/<[^>]*>/g, '').trim();
+                if (clean && clean !== '-' && clean !== '—') {
                     items.push(clean);
+                    if (clean === 'Аура death') stats.auras++;
                 }
             }
             
             if (items.length === 0) return 'пустой';
             
-            for (let item of items) {
-                if (item === 'Аура death') {
-                    stats.auras++;
-                }
-            }
-            
             const countMap = new Map();
-            for (let item of items) {
-                countMap.set(item, (countMap.get(item) || 0) + 1);
-            }
+            for (let item of items) countMap.set(item, (countMap.get(item) || 0) + 1);
             
             const result = [];
-            for (let [item, count] of countMap) {
-                if (count === 1) {
-                    result.push(item);
-                } else {
-                    result.push(`${count} ${item}`);
-                }
-            }
-            
+            for (let [item, cnt] of countMap) result.push(cnt === 1 ? item : `${cnt} ${item}`);
             return result.join(', ');
         }
-        
-        function getStyleFromColor(color) {
-            const colorMap = {
-                'green': 'Урон',
-                'red': 'Броня',
-                'blue': 'Уворот',
-                'yellow': 'Элита'
-            };
-            return colorMap[color] || 'Неизвестно';
+
+        function getStyleByColor(color) {
+            if (color === 'green') return 'Урон';
+            if (color === 'red') return 'Броня';
+            if (color === 'blue') return 'Уворот';
+            if (color === 'yellow') return 'Элита';
+            return 'Неизвестно';
         }
-        
-        function getStyleColor(style) {
-            const colors = {
-                'Урон': '#00ff00',
-                'Броня': '#ff4444',
-                'Уворот': '#4488ff',
-                'Элита': '#ffff44'
-            };
-            return colors[style] || '#ffffff';
-        }
-        
-        async function parsePlayer(nickname, playerId, stats) {
-            const url = `https://mobitva.net/equipment.php?id=${playerId}`;
-            
+
+        async function parsePlayer(nick, id, stats) {
             try {
-                const response = await fetch(url);
+                const proxyUrl = 'http://136.244.71.214/proxy.php?url=';
+                const targetUrl = `https://mobitva.net/equipment.php?id=${id}`;
+                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
                 const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
                 
-                let weapon = null;
-                let style = null;
-                let belt = null;
+                let weapon = 'не найдено';
+                let style = 'Неизвестно';
+                let belt = 'пустой';
                 
-                const rows = doc.querySelectorAll('tr');
-                
-                for (let row of rows) {
-                    const labelCell = row.querySelector('td.label');
-                    if (!labelCell) continue;
-                    
-                    const labelText = labelCell.textContent.trim();
-                    
-                    if (labelText === 'Оружие:') {
-                        const valueCell = row.querySelector('td:last-child');
-                        if (valueCell) {
-                            weapon = valueCell.textContent.trim().replace(/\s+/g, ' ').trim();
-                            if (weapon && weapon !== 'не найдено') {
-                                stats.weapons.set(weapon, (stats.weapons.get(weapon) || 0) + 1);
-                            }
-                        }
-                    }
-                    
-                    if (labelText === 'Доспехи:') {
-                        const valueCell = row.querySelector('td:last-child');
-                        if (valueCell) {
-                            const colorSpan = valueCell.querySelector('span');
-                            if (colorSpan) {
-                                const color = colorSpan.getAttribute('style');
-                                if (color) {
-                                    if (color.includes('green')) style = getStyleFromColor('green');
-                                    else if (color.includes('red')) style = getStyleFromColor('red');
-                                    else if (color.includes('blue')) style = getStyleFromColor('blue');
-                                    else if (color.includes('yellow')) style = getStyleFromColor('yellow');
-                                    else style = 'Неизвестно';
-                                    
-                                    if (stats.styles[style] !== undefined) {
-                                        stats.styles[style]++;
-                                    } else {
-                                        stats.styles['Неизвестно']++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (labelText === 'Пояс:') {
-                        const valueCell = row.querySelector('td:last-child');
-                        if (valueCell) {
-                            const beltHtml = valueCell.innerHTML;
-                            belt = parseBelt(beltHtml, stats);
-                        }
+                // Парсим оружие
+                const weaponMatch = html.match(/Оружие:<\/td>.*?<span[^>]*>(.*?)<\/span>/i);
+                if (weaponMatch && weaponMatch[1]) {
+                    weapon = weaponMatch[1].trim();
+                    if (weapon && weapon !== '-' && weapon !== '—') {
+                        stats.weapons.set(weapon, (stats.weapons.get(weapon) || 0) + 1);
                     }
                 }
                 
-                if (!weapon) weapon = 'не найдено';
-                if (!style) style = 'Неизвестно';
+                // Парсим стиль по цвету доспехов
+                const armorMatch = html.match(/Доспехи:<\/td>.*?color:(\w+)/i);
+                if (armorMatch && armorMatch[1]) {
+                    style = getStyleByColor(armorMatch[1].toLowerCase());
+                    stats.styles[style] = (stats.styles[style] || 0) + 1;
+                }
                 
-                return { nickname, style, weapon, belt, success: true };
+                // Парсим пояс
+                const beltMatch = html.match(/Пояс:<\/td>.*?>(.*?)<\/td>/i);
+                if (beltMatch && beltMatch[1]) {
+                    let beltRaw = beltMatch[1].trim();
+                    if (beltRaw !== '-' && beltRaw !== '—') {
+                        belt = parseBelt(beltRaw, stats);
+                    }
+                }
                 
-            } catch (error) {
-                return { nickname, style: 'Ошибка', weapon: 'Ошибка', belt: 'Ошибка', success: false };
+                return { nickname: nick, style, weapon, belt };
+            } catch(e) {
+                console.error(`Ошибка ${nick}:`, e);
+                return { nickname: nick, style: 'Ошибка', weapon: 'Ошибка', belt: 'Ошибка' };
             }
         }
-        
+
         async function runParser() {
             if (isParsing) return;
-            
-            const selectedPlayers = playersList.filter(p => p.selected);
-            
-            if (selectedPlayers.length === 0) {
-                alert('Выберите хотя бы одного персонажа!');
-                return;
-            }
+            const selected = playersList.filter(p => p.selected);
+            if (!selected.length) { alert('Выберите хотя бы одного персонажа'); return; }
             
             isParsing = true;
-            document.getElementById('parseBtn').disabled = true;
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('stats').style.display = 'none';
-            document.getElementById('progress').style.display = 'block';
+            const parseBtn = document.getElementById('parseBtn');
+            parseBtn.disabled = true;
+            parseBtn.innerText = '⏳ ПАРСИНГ...';
             
-            const stats = {
-                styles: { Урон: 0, Броня: 0, Уворот: 0, Элита: 0, Неизвестно: 0 },
-                weapons: new Map(),
-                auras: 0
-            };
+            document.getElementById('resultsArea').style.display = 'none';
+            document.getElementById('statsArea').style.display = 'none';
+            document.getElementById('progressArea').style.display = 'block';
             
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            const stats = { styles: {}, weapons: new Map(), auras: 0 };
             const results = [];
-            const total = selectedPlayers.length;
             
-            for (let i = 0; i < total; i++) {
-                const player = selectedPlayers[i];
-                document.getElementById('progressText').innerText = `${i}/${total}`;
-                document.getElementById('currentPlayer').innerText = player.nick;
+            for (let i = 0; i < selected.length; i++) {
+                const percent = ((i + 1) / selected.length) * 100;
+                progressBar.style.width = `${percent}%`;
+                progressText.innerText = `${i + 1} / ${selected.length} - ${selected[i].nick}`;
                 
-                const result = await parsePlayer(player.nick, player.id, stats);
+                const result = await parsePlayer(selected[i].nick, selected[i].id, stats);
                 results.push(result);
                 
-                if (i < total - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
+                if (i < selected.length - 1) await new Promise(r => setTimeout(r, 500));
             }
             
-            document.getElementById('progress').style.display = 'none';
+            progressBar.style.width = '100%';
+            progressText.innerText = `✅ Готово! ${selected.length}/${selected.length}`;
+            setTimeout(() => document.getElementById('progressArea').style.display = 'none', 1000);
             
-            let resultsHtml = '<table><tr><th>Ник</th><th>Стиль</th><th>Оружие</th><th>Пояс</th></tr>';
-            for (let result of results) {
-                const color = getStyleColor(result.style);
-                resultsHtml += `<tr style="color: ${color}">
-                    <td>${result.nickname}</td>
-                    <td>${result.style}</td>
-                    <td>${result.weapon}</td>
-                    <td>${result.belt}</td>
+            let tableHtml = '<table><thead><tr><th>Ник</th><th>Стиль</th><th>Оружие</th><th>Пояс</th></tr></thead><tbody>';
+            for (let r of results) {
+                let styleClass = '';
+                if (r.style === 'Урон') styleClass = 'style-Урон';
+                else if (r.style === 'Броня') styleClass = 'style-Броня';
+                else if (r.style === 'Уворот') styleClass = 'style-Уворот';
+                else if (r.style === 'Элита') styleClass = 'style-Элита';
+                else if (r.style === 'Ошибка') styleClass = 'error-text';
+                
+                tableHtml += `<tr>
+                    <td>${r.nickname}</td>
+                    <td class="${styleClass}">${r.style}</td>
+                    <td>${r.weapon}</td>
+                    <td>${r.belt}</td>
                 </tr>`;
             }
-            resultsHtml += '</table>';
-            document.getElementById('resultsTable').innerHTML = resultsHtml;
-            document.getElementById('results').style.display = 'block';
+            tableHtml += '</tbody></table>';
+            document.getElementById('resultsTable').innerHTML = tableHtml;
+            document.getElementById('resultsArea').style.display = 'block';
             
-            let statsHtml = '';
-            
-            statsHtml += '<div class="stat-item"><span class="stat-label">🎨 СТИЛИ:</span></div>';
-            for (let [style, count] of Object.entries(stats.styles)) {
-                if (count > 0) {
-                    const color = getStyleColor(style);
-                    statsHtml += `<div class="stat-item" style="color: ${color}; margin-left: 20px;">${style}: ${count}</div>`;
-                }
+            let statsHtml = '<div class="stats-grid">';
+            statsHtml += '<div class="stat-block"><h3>🎨 СТИЛИ</h3><div class="stat-list">';
+            for (let [s, c] of Object.entries(stats.styles)) {
+                let styleClass = '';
+                if (s === 'Урон') styleClass = 'style-Урон';
+                else if (s === 'Броня') styleClass = 'style-Броня';
+                else if (s === 'Уворот') styleClass = 'style-Уворот';
+                else if (s === 'Элита') styleClass = 'style-Элита';
+                statsHtml += `<div class="stat-item"><span class="${styleClass}">${s}</span><span>${c}</span></div>`;
             }
+            statsHtml += '</div></div>';
             
-            statsHtml += '<div class="stat-item"><span class="stat-label">⚔️ ОРУЖИЕ:</span></div>';
-            const sortedWeapons = Array.from(stats.weapons.entries()).sort((a, b) => b[1] - a[1]);
-            for (let [weapon, count] of sortedWeapons) {
-                statsHtml += `<div class="stat-item" style="margin-left: 20px;">${count} x ${weapon}</div>`;
+            statsHtml += '<div class="stat-block"><h3>⚔️ ОРУЖИЕ</h3><div class="stat-list">';
+            const sortedWeapons = [...stats.weapons.entries()].sort((a,b) => b[1] - a[1]);
+            for (let [w, c] of sortedWeapons.slice(0, 15)) {
+                statsHtml += `<div class="stat-item"><span>${w}</span><span>${c} шт</span></div>`;
             }
+            if (sortedWeapons.length > 15) statsHtml += `<div class="stat-item"><span>...</span><span>+${sortedWeapons.length - 15}</span></div>`;
+            statsHtml += '</div></div>';
             
-            statsHtml += `<div class="stat-item"><span class="stat-label">✨ АУРЫ:</span></div>`;
-            statsHtml += `<div class="stat-item auras" style="margin-left: 20px;">Аура death: ${stats.auras}</div>`;
-            
+            statsHtml += '<div class="stat-block"><h3>✨ АУРЫ</h3><div class="auras-count">Аура death: ' + stats.auras + '</div></div></div>';
             document.getElementById('statsContent').innerHTML = statsHtml;
-            document.getElementById('stats').style.display = 'block';
+            document.getElementById('statsArea').style.display = 'block';
             
             isParsing = false;
-            document.getElementById('parseBtn').disabled = false;
+            parseBtn.disabled = false;
+            parseBtn.innerText = '🚀 ЗАПУСТИТЬ ПАРСИНГ';
         }
-        
-        function clearResults() {
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('stats').style.display = 'none';
-            document.getElementById('progress').style.display = 'none';
-        }
-        
-        document.getElementById('loadPlayersBtn').addEventListener('click', loadPlayersFromText);
-        document.getElementById('selectAllBtn').addEventListener('click', selectAll);
-        document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
-        document.getElementById('saveSelectionBtn').addEventListener('click', saveSelectionToLocalStorage);
-        document.getElementById('parseBtn').addEventListener('click', runParser);
-        document.getElementById('clearBtn').addEventListener('click', clearResults);
-        
-        if (playersList.length === 0) {
-            const defaultText = document.getElementById('players').value;
-            const lines = defaultText.split('\n');
-            for (let line of lines) {
-                line = line.trim();
-                if (line) {
-                    const parts = line.split('|');
-                    if (parts.length === 2) {
-                        playersList.push({
-                            nick: parts[0].trim(),
-                            id: parseInt(parts[1].trim()),
-                            selected: true
-                        });
-                    }
-                }
-            }
-            loadSelectionFromLocalStorage();
-            renderCheckboxList();
-            if (playersList.length > 0) {
-                document.getElementById('parseBtn').disabled = false;
-            }
+
+        document.getElementById('selectAllBtn').onclick = selectAll;
+        document.getElementById('deselectAllBtn').onclick = deselectAll;
+        document.getElementById('saveSelectionBtn').onclick = saveSelection;
+        document.getElementById('parseBtn').onclick = runParser;
+
+        if (!loadFromLocalStorage()) {
+            initDefaultPlayers();
         }
     </script>
 </body>
